@@ -30,7 +30,7 @@ class ChefkochRecipe:
 def extract_recipe_id(url: str) -> str:
     match = CHEFKOCH_ID_RE.search(url)
     if not match:
-        raise ValueError("Keine gÃ¼ltige Chefkoch-Rezept-URL")
+        raise ValueError("Keine gültige Chefkoch-Rezept-URL")
     return match.group(1)
 
 

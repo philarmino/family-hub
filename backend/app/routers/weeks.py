@@ -115,7 +115,7 @@ async def add_wishes(
         db.add(wish)
         created.append(wish)
     if not created:
-        raise HTTPException(400, "Keine gÃ¼ltigen Wunschtexte")
+        raise HTTPException(400, "Keine gültigen Wunschtexte")
     await db.commit()
     for wish in created:
         await db.refresh(wish)
@@ -140,7 +140,7 @@ async def update_wish(
     db: AsyncSession = Depends(get_db),
 ):
     if payload.status not in {"approved", "rejected", "pending"}:
-        raise HTTPException(400, "UngÃ¼ltiger Status")
+        raise HTTPException(400, "Ungültiger Status")
     plan = await get_or_create_plan(db, offset)
     wish = await db.get(Wish, wish_id)
     if not wish or wish.plan_id != plan.id:
@@ -280,5 +280,5 @@ async def push_bring(
     return BringPushResult(
         ok=True,
         items_added=count,
-        message=f"{count} EintrÃ¤ge zu Bring! hinzugefÃ¼gt",
+        message=f"{count} Einträge zu Bring! hinzugefügt",
     )
