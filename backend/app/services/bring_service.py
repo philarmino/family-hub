@@ -24,8 +24,11 @@ async def list_bring_lists(settings: Settings) -> list[dict[str, str]]:
         await bring.login()
         payload = await bring.load_lists()
         return [
-            {"list_uuid": entry["listUuid"], "name": entry.get("name") or entry["listUuid"]}
-            for entry in payload.get("lists", [])
+            {
+                "list_uuid": entry.listUuid,
+                "name": entry.name or entry.listUuid,
+            }
+            for entry in payload.lists
         ]
 
 
