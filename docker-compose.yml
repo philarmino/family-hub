@@ -1,0 +1,17 @@
+services:
+  family-hub:
+    build: .
+    container_name: family-hub
+    restart: unless-stopped
+    ports:
+      - "${HOMEPI_IP:-127.0.0.1}:8080:8080/tcp"
+    environment:
+      TZ: ${TZ:-Europe/Berlin}
+      DATA_DIR: /app/data
+      DEFAULT_SERVINGS: ${DEFAULT_SERVINGS:-4}
+      BRING_EMAIL: ${BRING_EMAIL:-}
+      BRING_PASSWORD: ${BRING_PASSWORD:-}
+      BRING_LIST_UUID: ${BRING_LIST_UUID:-}
+      BRING_PUSH_PASSWORD: ${BRING_PUSH_PASSWORD:-family}
+    volumes:
+      - ./data:/app/data
