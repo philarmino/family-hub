@@ -16,7 +16,8 @@ const WEEKDAYS = [
 
 const WEEK_LABELS = ["Diese Woche", "Nächste Woche", "Übernächste Woche"];
 
-type Tab = "plan" | "wishes" | "catalog" | "family";
+type WeekTab = "plan" | "wishes";
+type View = WeekTab | "catalog" | "family";
 
 function formatWeekRange(weekStart: string): string {
   const start = new Date(`${weekStart}T12:00:00`);
@@ -28,8 +29,9 @@ function formatWeekRange(weekStart: string): string {
 }
 
 export default function ParentsPage() {
-  const [tab, setTab] = useState<Tab>("plan");
+  const [view, setView] = useState<View>("plan");
   const [weekOffset, setWeekOffset] = useState(0);
+  const isWeekView = view === "plan" || view === "wishes";
   const [meals, setMeals] = useState<Meal[]>([]);
   const [plan, setPlan] = useState<WeekPlan | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
@@ -199,46 +201,76 @@ export default function ParentsPage() {
     <div>
       <h1 className="page-title">Eltern</h1>
       <p className="lede">
-        {"Vorschläge prüfen, Wochen planen und Einkauf nach Bring! schicken."}
+        {view === "catalog"
+          ? "Rezepte anlegen, Fotos pflegen und Chefkoch importieren."
+          : view === "family"
+            ? "Kinder für die Vorschläge und Wunschfelder verwalten."
+            : "Vorschläge prüfen, Wochen planen und Einkauf nach Bring! schicken."}
       </p>
 
-      <div className="week-switcher" aria-label="Woche wählen">
-        {WEEK_LABELS.map((label, idx) => (
-          <button
-            key={label}
-            type="button"
-            className={weekOffset === idx ? "chip active" : "chip"}
-            onClick={() => setWeekOffset(idx)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {plan && (
-        <p className="muted week-range">{formatWeekRange(plan.week_start)}</p>
+      {isWeekView && (
+        <>
+          <div className="week-switcher" aria-label="Woche wählen">
+            {WEEK_LABELS.map((label, idx) => (
+              <button
+                key={label}
+                type="button"
+                className={weekOffset === idx ? "chip active" : "chip"}
+                onClick={() => setWeekOffset(idx)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {plan && (
+            <p className="muted week-range">{formatWeekRange(plan.week_start)}</p>
+          )}
+
+          <div className="tabs">
+            {(
+              [
+                ["plan", "Wochenplan"],
+                ["wishes", "Wünsche"],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                className={view === id ? "tab active" : "tab"}
+                onClick={() => setView(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </>
       )}
 
-      <div className="tabs">
-        {(
-          [
-            ["plan", "Wochenplan"],
-            ["wishes", "Wünsche"],
-            ["catalog", "Katalog"],
-            ["family", "Familie"],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={tab === id ? "tab active" : "tab"}
-            onClick={() => setTab(id)}
-          >
-            {label}
+      {!isWeekView && (
+        <div className="setup-bar">
+          <button type="button" className="text-link" onClick={() => setView("plan")}>
+            ← Zur Woche
           </button>
-        ))}
-      </div>
+          <div className="setup-tabs" role="tablist" aria-label="Verwaltung">
+            <button
+              type="button"
+              className={view === "catalog" ? "tab active" : "tab"}
+              onClick={() => setView("catalog")}
+            >
+              Katalog
+            </button>
+            <button
+              type="button"
+              className={view === "family" ? "tab active" : "tab"}
+              onClick={() => setView("family")}
+            >
+              Familie
+            </button>
+          </div>
+        </div>
+      )}
 
-      {tab === "plan" && plan && (
+      {view === "plan" && plan && (
         <section>
           <div className="row" style={{ marginBottom: "1rem" }}>
             <span className="muted">Status: {plan.status}</span>
@@ -344,7 +376,7 @@ export default function ParentsPage() {
         </section>
       )}
 
-      {tab === "wishes" && plan && (
+      {view === "wishes" && plan && (
         <section>
           <ul className="list">
             {plan.wishes.map((w) => (
@@ -386,7 +418,7 @@ export default function ParentsPage() {
         </section>
       )}
 
-      {tab === "catalog" && (
+      {view === "catalog" && (
         <section>
           <div className="panel" style={{ marginBottom: "1rem" }}>
             <h2 style={{ marginTop: 0 }}>Aus Chefkoch importieren</h2>
@@ -444,7 +476,7 @@ export default function ParentsPage() {
         </section>
       )}
 
-      {tab === "family" && (
+      {view === "family" && (
         <section className="panel">
           <h2 style={{ marginTop: 0 }}>Kinder</h2>
           <ul className="list">
@@ -477,6 +509,20 @@ export default function ParentsPage() {
             </button>
           </div>
         </section>
+      )}
+
+      {isWeekView && (
+        <nav className="manage-links" aria-label="Verwaltung">
+          <button type="button" className="text-link" onClick={() => setView("catalog")}>
+            Katalog
+          </button>
+          <span className="manage-sep" aria-hidden="true">
+            ·
+          </span>
+          <button type="button" className="text-link" onClick={() => setView("family")}>
+            Familie
+          </button>
+        </nav>
       )}
 
       {message && <div className="toast">{message}</div>}
