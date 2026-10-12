@@ -160,7 +160,7 @@ async def update_days(
 ):
     plan = await get_or_create_plan(db, offset)
     if plan.status == "finalized":
-        raise HTTPException(400, "Plan ist finalisiert - erst zuruecksetzen")
+        raise HTTPException(400, "Plan ist finalisiert – erst zurücksetzen")
 
     day_map = {d.weekday: d for d in plan.days}
     for assignment in payload.days:
@@ -214,7 +214,7 @@ async def reset_days(
     db: AsyncSession = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ):
-    """Leert alle Tages-Essen der gewaehlten Woche und setzt Personen zurueck."""
+    """Leert alle Tages-Essen der gewählten Woche und setzt Personen zurück."""
     plan = await get_or_create_plan(db, offset)
     default_servings = plan.target_servings or settings.default_servings
     for day in plan.days:
