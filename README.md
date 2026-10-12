@@ -17,12 +17,12 @@ Kein Login. Nur die Aktion „In Bring! legen“ verlangt das Passwort `BRING_PU
 ```bash
 cd ~/docker/family-hub   # oder dieses Repo
 cp .env.example .env
-# .env ausfüllen: HOMEPI_IP, BRING_*, BRING_PUSH_PASSWORD
+# .env ausfüllen: HOMEPI_IP, PORT, BRING_*, BRING_PUSH_PASSWORD
 
 docker compose up -d --build
 ```
 
-Öffnen: `http://<HOMEPI_IP>:8080`
+Öffnen: `http://<HOMEPI_IP>:<PORT>` (Standard: `8080`)
 
 ### Bring!-Liste finden
 
@@ -66,6 +66,7 @@ Vite proxied `/api` und `/media` auf Port 8080.
 | Variable | Bedeutung |
 |----------|-----------|
 | `HOMEPI_IP` | LAN-IP für Port-Bind (Compose) |
+| `PORT` | HTTP-Port (Host + Container, Standard `8080`) |
 | `DEFAULT_SERVINGS` | Standard-Personenanzahl |
 | `BRING_EMAIL` / `BRING_PASSWORD` | Bring!-Account |
 | `BRING_LIST_UUID` | Ziel-Einkaufsliste |

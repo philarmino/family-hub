@@ -23,9 +23,10 @@ COPY --from=frontend /frontend/dist ./static
 RUN mkdir -p /app/data/photos
 
 ENV DATA_DIR=/app/data
+ENV PORT=8080
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONUTF8=1
 ENV LANG=C.UTF-8
 
 EXPOSE 8080
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
